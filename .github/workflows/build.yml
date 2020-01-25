@@ -16,6 +16,6 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Build docker image
-      run: docker build . --file Dockerfile --tag docker-mysql-spring-boot-example:latest
+      run: docker build . --file Dockerfile --tag bhvishal91/docker-mysql-spring-boot-example:latest
     - name: Push docker image
-      run: docker push docker-mysql-spring-boot-example:latest
+      run: docker push bhvishal91/docker-mysql-spring-boot-example:latest
