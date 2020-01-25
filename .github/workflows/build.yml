@@ -1,4 +1,4 @@
-name: Java CI
+name: Build
 
 on: [push]
 
@@ -17,3 +17,5 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Build docker image
       run: docker build . --file Dockerfile --tag docker-mysql-spring-boot-example:latest
+    - name: Push docker image
+      run: docker push docker-mysql-spring-boot-example:latest
