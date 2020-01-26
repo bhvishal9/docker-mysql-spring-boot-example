@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "spring-app.fullname" . }}
+  labels:
+    {{- include "spring-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "spring-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "spring-app.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.imageName }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{ if .Values.envVars }}
+          {{- range $key, $value := .Values.envVars }}
+            - name: {{ default "none" $key }}
+              value: {{ default "none" $value }}
+          {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8086
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /all/
+              port: http
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /all/
+              port: http
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
